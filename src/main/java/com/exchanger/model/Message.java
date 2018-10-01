@@ -10,8 +10,12 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String text_message;
-    private Integer user_to;
-    private Integer user_from;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
+    private User user_to;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
+    private User user_from;
     private Integer message_type;
     private Date dateSend;
     private Date dateGet;
@@ -20,7 +24,7 @@ public class Message {
     public Message() {
     }
 
-    public Message(String text_message, Integer user_to, Integer user_from, Integer message_type, Date dateSend, Date dateGet, Integer status) {
+    public Message(String text_message, User user_to, User user_from, Integer message_type, Date dateSend, Date dateGet, Integer status) {
         this.text_message = text_message;
         this.user_to = user_to;
         this.user_from = user_from;
@@ -46,19 +50,19 @@ public class Message {
         this.text_message = text_message;
     }
 
-    public Integer getUser_to() {
+    public User getUser_to() {
         return user_to;
     }
 
-    public void setUser_to(Integer user_to) {
+    public void setUser_to(User user_to) {
         this.user_to = user_to;
     }
 
-    public Integer getUser_from() {
+    public User getUser_from() {
         return user_from;
     }
 
-    public void setUser_from(Integer user_from) {
+    public void setUser_from(User user_from) {
         this.user_from = user_from;
     }
 

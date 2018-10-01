@@ -6,7 +6,10 @@ import com.exchanger.repository.MessageRepository;
 import com.exchanger.repository.MessageStatusRepository;
 import com.exchanger.repository.MessageTypeRepository;
 import com.exchanger.repository.UserRepository;
+import com.exchanger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,7 @@ import static java.lang.System.gc;
 
 @Controller
 @RequestMapping("/user")
+@PreAuthorize("hasAuthority('USER')")
 public class PrivateAreaController {
 
     private User user;
@@ -32,6 +36,9 @@ public class PrivateAreaController {
     private MessageRepository messageRepository;
     @Autowired
     private MessageStatusRepository messageStatusRepository;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public String getUserRoomPage(User user){
@@ -48,8 +55,8 @@ public class PrivateAreaController {
                 mapMessage= new HashMap<String,Object>(7);
                 mapMessage.put("id", item.getId());
                 mapMessage.put("text", item.getText_message());
-                mapMessage.put("emailFrom", userRepository.findById(item.getUser_from()).getEmail());
-                mapMessage.put("emailTo", userRepository.findById(item.getUser_to()).getEmail());
+                mapMessage.put("emailFrom", item.getUser_from().getEmail());
+                mapMessage.put("emailTo", item.getUser_to().getEmail());
                 mapMessage.put("dateSend", item.getDateSend());
                 mapMessage.put("dateGet", item.getDateGet());
                 mapMessage.put("type", messageTypeRepository.findById(item.getMessage_type()).getType());
@@ -62,13 +69,13 @@ public class PrivateAreaController {
     }
 
     @PostMapping("send")
-    public String send(@RequestParam String email,@RequestParam String textMessage, @RequestParam String typeM , Model model) {
+    public String send(@AuthenticationPrincipal User user, @RequestParam String email, @RequestParam String textMessage, @RequestParam String typeM , Model model) {
        if(!email.isEmpty()&&!textMessage.isEmpty()&&!typeM.isEmpty()) {
            Message message = new Message();
            message.setText_message(textMessage);
            message.setMessage_type(messageTypeRepository.findByType(typeM).getId());
-           message.setUser_to(userRepository.findByEmail(email).getId());
-           message.setUser_from(userRepository.findByEmail("admin@mail.ru").getId());
+           message.setUser_to(userRepository.findByEmail(email));
+           message.setUser_from(user);
            message.setDateSend(new Date());
            message.setStatus(messageStatusRepository.findByStatus("SEND").getId());
            messageRepository.save(message);

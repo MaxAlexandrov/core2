@@ -7,6 +7,7 @@ import com.exchanger.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +23,11 @@ import java.util.List;
 public class RegistrationController {
     Logger logger = LoggerFactory.getLogger(RegistrationController.class);
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RoleRepository roleReepository;
+    private RoleRepository roleReepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping
     public String getRegistrationPage(){
@@ -45,7 +48,8 @@ public class RegistrationController {
                 }
             }
         }
-        user.setRole(Collections.singleton(RoleEnum.ROLE_USER));
+        user.setRole(Collections.singleton(RoleEnum.USER));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
         userRepository.save(user);
         return "redirect:/login";
