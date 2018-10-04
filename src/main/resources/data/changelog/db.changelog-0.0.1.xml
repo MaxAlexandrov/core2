@@ -152,14 +152,14 @@
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="text_message" type="varchar">
+            <column name="text_message" type="varchar(2048)">
                 <constraints nullable="false"/>
             </column>
             <column name="user_to" type="int">
-                <constraints nullable="true"/>
+                <constraints nullable="false" />
             </column>
             <column name="user_from" type="int">
-                <constraints nullable="true"/>
+                <constraints nullable="false" />
             </column>
             <column name="message_type" type="int">
                 <constraints nullable="false"/>
@@ -172,34 +172,10 @@
             </column>
         </createTable>
     </changeSet>
-
-    <changeSet id ="10" author="maksim">
-        <addForeignKeyConstraint baseColumnNames="user_to"
-                                 baseTableName="message"
-                                 constraintName="fkto_message_users"
-                                 deferrable="true"
-                                 initiallyDeferred="true"
-                                 onDelete="CASCADE"
-                                 onUpdate="RESTRICT"
-                                 referencedColumnNames="id"
-                                 referencedTableName="users"/>
-    </changeSet>
-    <changeSet id ="11" author="maksim">
-        <addForeignKeyConstraint baseColumnNames="user_from"
-                                 baseTableName="message"
-                                 constraintName="fkfrom_message_users"
-                                 deferrable="true"
-                                 initiallyDeferred="true"
-                                 onDelete="CASCADE"
-                                 onUpdate="RESTRICT"
-                                 referencedColumnNames="id"
-                                 referencedTableName="users"/>
-    </changeSet>
-
-    <changeSet id="12" author="maksim">
+    <changeSet id="11" author="maksim">
         <insert tableName="message">
             <column name="id" value="1"/>
-            <column name="text_message" value="Добрый вечер как дела?"/>
+            <column name="text_message" value="Привет как дела?"/>
             <column name="user_to" value="1"/>
             <column name="user_from" value="2"/>
             <column name="message_type" value="1"/>
@@ -208,7 +184,7 @@
         </insert>
         <insert tableName="message">
             <column name="id" value="2"/>
-            <column name="text_message" value="Добрый вечер как дела?"/>
+            <column name="text_message" value="Привет.Есть новости?"/>
             <column name="user_to" value="1"/>
             <column name="user_from" value="3"/>
             <column name="message_type" value="1"/>
@@ -244,7 +220,7 @@
         </insert>
         <insert tableName="message">
             <column name="id" value="6"/>
-            <column name="text_message" value="Добрый вечер как дела?"/>
+            <column name="text_message" value="Пока. До связи!"/>
             <column name="user_to" value="1"/>
             <column name="user_from" value="2"/>
             <column name="message_type" value="1"/>
@@ -254,7 +230,7 @@
     </changeSet>
     <!--/////////////////////////////////////////////////////-->
     <!-- Создание таблицы role и заполнение полей для mail -->
-    <changeSet id="13" author="maksim">
+    <changeSet id="12" author="maksim">
         <createTable tableName="user_role">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
@@ -264,7 +240,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="14" author="maksim">
+    <changeSet id="13" author="maksim">
         <insert tableName="user_role">
             <column name="id" value="1"/>
             <column name="role" value="ADMIN"/>

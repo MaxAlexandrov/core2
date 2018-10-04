@@ -28,10 +28,8 @@ public class AdminController {
 
     @PostMapping("filter")
     public String filter(@RequestParam String filter, Model model) {
-        List<Message> messages;
+        List<Message> messages = null;
         if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findAll();
-        } else {
             messages = messageRepository.findAll();
         }
         model.addAttribute("all_message", messages);

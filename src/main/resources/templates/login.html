@@ -5,6 +5,12 @@
     <title>Login Page</title>
 </head>
 <body>
+<div id = "registration">
+    <div th:switch="${message}">
+        <p th:case="null"></p>
+        <p th:case="*" th:text = ${message}/>
+    </div>
+</div>
 <hr>
 <form th:action="@{/login}" method="post">
     <div><label> User Name : <input type="text" name="username"/> </label></div>

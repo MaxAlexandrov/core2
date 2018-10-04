@@ -6,7 +6,7 @@ import com.exchanger.repository.MessageRepository;
 import com.exchanger.repository.MessageStatusRepository;
 import com.exchanger.repository.MessageTypeRepository;
 import com.exchanger.repository.UserRepository;
-import com.exchanger.service.UserService;
+import com.exchanger.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
-
-import static java.lang.System.gc;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -38,7 +39,7 @@ public class PrivateAreaController {
     private MessageStatusRepository messageStatusRepository;
 
     @Autowired
-    private UserService userService;
+    private MessageService messageService;
 
     @GetMapping
     public String getUserRoomPage(User user){
@@ -47,40 +48,56 @@ public class PrivateAreaController {
     }
 
     @PostMapping("/filter")
-    public String filter(@RequestParam String filter, Model model) {
+    public String filter(@AuthenticationPrincipal User user,@RequestParam String filter, Model model) {
         List<Map> listMessages = new ArrayList<>();
         Map<String,Object> mapMessage;
+        if(!filter.isEmpty()&& filter!=null){
             List<Message> dbListMessage = messageRepository.findAll();
-       for (Message item : dbListMessage) {
-                mapMessage= new HashMap<String,Object>(7);
-                mapMessage.put("id", item.getId());
-                mapMessage.put("text", item.getText_message());
-                mapMessage.put("emailFrom", item.getUser_from().getEmail());
-                mapMessage.put("emailTo", item.getUser_to().getEmail());
-                mapMessage.put("dateSend", item.getDateSend());
-                mapMessage.put("dateGet", item.getDateGet());
-                mapMessage.put("type", messageTypeRepository.findById(item.getMessage_type()).getType());
-                mapMessage.put("status", messageStatusRepository.findById(item.getStatus()).getStatus());
-                listMessages.add(mapMessage);
-                gc();
+            for (Message item : dbListMessage) {
+                if(item.getUser_from() == user.getId()){
+                    mapMessage = new HashMap<String, Object>(7);
+                    mapMessage.put("id", item.getId());
+                    mapMessage.put("text", item.getText_message());
+                    mapMessage.put("emailFrom", item.getUser_from());
+                    mapMessage.put("emailTo", item.getUser_to());
+                    mapMessage.put("dateSend", item.getDateSend());
+                    mapMessage.put("dateGet", item.getDateGet());
+                    mapMessage.put("type", messageTypeRepository.findById(item.getMessage_type()).getType());
+                    mapMessage.put("status", messageStatusRepository.findById(item.getStatus()).getStatus());
+                    listMessages.add(mapMessage);
+                }
             }
+        } else {
+                List<Message> dbListMessage = messageRepository.findAll();
+                for (Message item : dbListMessage) {
+                    mapMessage= new HashMap<String,Object>(7);
+                    mapMessage.put("id", item.getId());
+                    mapMessage.put("text", item.getText_message());
+                    mapMessage.put("emailFrom", item.getUser_from());
+                    mapMessage.put("emailTo", item.getUser_to());
+                    mapMessage.put("dateSend", item.getDateSend());
+                    mapMessage.put("dateGet", item.getDateGet());
+                    mapMessage.put("type", messageTypeRepository.findById(item.getMessage_type()).getType());
+                    mapMessage.put("status", messageStatusRepository.findById(item.getStatus()).getStatus());
+                    listMessages.add(mapMessage);
+                }
+        }
         model.addAttribute("all_message", listMessages);
         return "user-room";
     }
 
-    @PostMapping("send")
-    public String send(@AuthenticationPrincipal User user, @RequestParam String email, @RequestParam String textMessage, @RequestParam String typeM , Model model) {
-       if(!email.isEmpty()&&!textMessage.isEmpty()&&!typeM.isEmpty()) {
-           Message message = new Message();
-           message.setText_message(textMessage);
-           message.setMessage_type(messageTypeRepository.findByType(typeM).getId());
-           message.setUser_to(userRepository.findByEmail(email));
-           message.setUser_from(user);
-           message.setDateSend(new Date());
-           message.setStatus(messageStatusRepository.findByStatus("SEND").getId());
-           messageRepository.save(message);
-       }
-        model.addAttribute("success", "Done");
+    @PostMapping("/send")
+    public String send(@AuthenticationPrincipal User user, @RequestParam String email, @RequestParam String textMessage, @RequestParam String typeMessage , Model model) {
+        String showMessageUser;
+        if(!email.isEmpty()&&!textMessage.isEmpty()&&!typeMessage.isEmpty()) {
+            if (messageService.addMessageInDB(user, email, textMessage, typeMessage)) {
+                showMessageUser = String.format("This MESSAGE send for email %s \n" + "sent.", email);
+                model.addAttribute("success", showMessageUser);
+            return "user-room";
+            }
+        }
+        showMessageUser = String.format("Sorry, but you need enter message");
+        model.addAttribute("success", showMessageUser);
         return "user-room";
     }
 }
