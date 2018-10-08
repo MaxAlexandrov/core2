@@ -3,8 +3,8 @@ package com.exchanger.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "b_user_role")
-public class BUserRole {
+@Table(name = "history_user_role")
+public class HistoryChangeUserAndRole {
 
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,10 +12,10 @@ public class BUserRole {
         private Integer user_id;
         private Integer role_id;
 
-    public BUserRole() {
+    public HistoryChangeUserAndRole() {
     }
 
-    public BUserRole(Integer user_id, Integer role_id) {
+    public HistoryChangeUserAndRole(Integer user_id, Integer role_id) {
         this.user_id = user_id;
         this.role_id = role_id;
     }
@@ -46,7 +46,7 @@ public class BUserRole {
 
     @Override
     public String toString() {
-        return "BUserRole{" +
+        return "HistoryChangeUserAndRole{" +
                 "id=" + id +
                 ", user_id=" + user_id +
                 ", role_id=" + role_id +

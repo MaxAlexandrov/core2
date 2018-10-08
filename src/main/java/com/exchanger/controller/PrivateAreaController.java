@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
@@ -42,24 +39,24 @@ public class PrivateAreaController {
     private MessageService messageService;
 
     @GetMapping
-    public String getUserRoomPage(User user){
-        this.user = userRepository.findByLogin(user.getLogin());
+    public String getUserRoomPage(@AuthenticationPrincipal User user){
+        messageService.changeStatusSendToGet(user);
         return "user-room";
     }
 
     @PostMapping("/filter")
     public String filter(@AuthenticationPrincipal User user,@RequestParam String filter, Model model) {
-        List<Map> listMessages = new ArrayList<>();
+        List<Map<String,Object>> listMessages = new ArrayList<>();
         Map<String,Object> mapMessage;
         if(!filter.isEmpty()&& filter!=null){
             List<Message> dbListMessage = messageRepository.findAll();
             for (Message item : dbListMessage) {
-                if(item.getUser_from() == user.getId()){
+                if(item.getUserFrom() == user.getId()){
                     mapMessage = new HashMap<String, Object>(7);
                     mapMessage.put("id", item.getId());
-                    mapMessage.put("text", item.getText_message());
-                    mapMessage.put("emailFrom", item.getUser_from());
-                    mapMessage.put("emailTo", item.getUser_to());
+                    mapMessage.put("text",item.getText_message() );
+                    mapMessage.put("emailFrom", item.getUserFrom());
+                    mapMessage.put("emailTo", item.getUserTo());
                     mapMessage.put("dateSend", item.getDateSend());
                     mapMessage.put("dateGet", item.getDateGet());
                     mapMessage.put("type", messageTypeRepository.findById(item.getMessage_type()).getType());
@@ -68,13 +65,13 @@ public class PrivateAreaController {
                 }
             }
         } else {
-                List<Message> dbListMessage = messageRepository.findAll();
+                List<Message> dbListMessage =messageRepository.findAll();
                 for (Message item : dbListMessage) {
                     mapMessage= new HashMap<String,Object>(7);
                     mapMessage.put("id", item.getId());
                     mapMessage.put("text", item.getText_message());
-                    mapMessage.put("emailFrom", item.getUser_from());
-                    mapMessage.put("emailTo", item.getUser_to());
+                    mapMessage.put("emailFrom", item.getUserFrom());
+                    mapMessage.put("emailTo", item.getUserTo());
                     mapMessage.put("dateSend", item.getDateSend());
                     mapMessage.put("dateGet", item.getDateGet());
                     mapMessage.put("type", messageTypeRepository.findById(item.getMessage_type()).getType());
@@ -100,4 +97,16 @@ public class PrivateAreaController {
         model.addAttribute("success", showMessageUser);
         return "user-room";
     }
+
+    @PostMapping("/searchEmail")
+    public boolean serchEmail(@AuthenticationPrincipal User user,@RequestParam String email, Model model) {
+        if (!email.isEmpty() && email != null) {
+            User emailUser = userRepository.findByEmail(email);
+            if (emailUser != null) {
+                return true;
+            } else return false;
+        }
+        return false;
+    }
+
 }

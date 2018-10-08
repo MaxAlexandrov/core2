@@ -18,8 +18,6 @@ import java.util.List;
 @PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
-    @Autowired
-    MessageRepository messageRepository;
 
     @GetMapping
     public String getPage(Model model){
@@ -29,9 +27,9 @@ public class AdminController {
     @PostMapping("filter")
     public String filter(@RequestParam String filter, Model model) {
         List<Message> messages = null;
-        if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findAll();
-        }
+//        if (filter != null && !filter.isEmpty()) {
+//            messages = messageRepository.findAll();
+//        }
         model.addAttribute("all_message", messages);
         return "admin-room";
     }

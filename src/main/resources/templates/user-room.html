@@ -20,7 +20,7 @@
 <div>
     <h3>SEND MESSAGE:</h3>
         <form method="post" action = "user/send">
-                <input type="email" name="email" placeholder="mail you friend" /> </br>
+                <input type="email" id  = "searchEmail" name="email" onblur="jsFunctionOnBlur()" placeholder="mail you friend" /> </br>
                 <p><textarea name="textMessage" cols="40" rows="4" placeholder="You message..."></textarea></p></br>
                 <input type="text" name="typeMessage" placeholder="custom/normal" /></br>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -79,5 +79,17 @@
             document.getElementById("main")
             );
     </script>
+<script>
+function jsFunctionOnBlur() {
+    var x = document.getElementById("searchEmail");
+var xhr = new XMLHttpRequest();
+xhr.open('POST', 'user/searchEmail', true);
+xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+xhr.onreadystatechange = function() {
+  if (this.readyState != 4) return;
+  alert( this.responseText );
+}
+}
+</script>
 </body>
 </html>

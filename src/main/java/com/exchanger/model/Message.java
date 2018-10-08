@@ -17,10 +17,10 @@ public class Message {
     private String text_message;
     //@ManyToOne(fetch = FetchType.EAGER)
     //@JoinColumn(name = "id", insertable = false, updatable=false)
-    private Integer user_to;
+    private Integer userTo;
 //    @ManyToOne(fetch = FetchType.EAGER)
 //    @JoinColumn(name = "id", insertable = false, updatable=false)
-    private Integer user_from;
+    private Integer userFrom;
     private Integer message_type;
     private Date dateSend;
     private Date dateGet;
@@ -29,10 +29,10 @@ public class Message {
     public Message() {
     }
 
-    public Message(String text_message, Integer user_to, Integer user_from, Integer message_type, Date dateSend, Date dateGet, Integer status) {
+    public Message(String text_message, Integer userTo, Integer userFrom, Integer message_type, Date dateSend, Date dateGet, Integer status) {
         this.text_message = text_message;
-        this.user_to = user_to;
-        this.user_from = user_from;
+        this.userTo = userTo;
+        this.userFrom = userFrom;
         this.message_type = message_type;
         this.dateSend = dateSend;
         this.dateGet = dateGet;
@@ -55,20 +55,20 @@ public class Message {
         this.text_message = text_message;
     }
 
-    public Integer getUser_to() {
-        return user_to;
+    public Integer getUserTo() {
+        return userTo;
     }
 
-    public void setUser_to(Integer user_to) {
-        this.user_to = user_to;
+    public void setUserTo(Integer userTo) {
+        this.userTo = userTo;
     }
 
-    public Integer getUser_from() {
-        return user_from;
+    public Integer getUserFrom() {
+        return userFrom;
     }
 
-    public void setUser_from(Integer user_from) {
-        this.user_from = user_from;
+    public void setUserFrom(Integer userFrom) {
+        this.userFrom = userFrom;
     }
 
     public Integer getMessage_type() {
@@ -108,8 +108,8 @@ public class Message {
         return "Message{" +
                 "id=" + id +
                 ", text_message='" + text_message + '\'' +
-                ", user_to=" + user_to +
-                ", user_from=" + user_from +
+                ", userTo=" + userTo +
+                ", userFrom=" + userFrom +
                 ", message_type=" + message_type +
                 ", dateSend=" + dateSend +
                 ", dateGet=" + dateGet +

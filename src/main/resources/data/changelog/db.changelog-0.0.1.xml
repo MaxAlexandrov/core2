@@ -122,6 +122,10 @@
                 <column name="id" value="2"/>
                 <column name="status" value="RECEIVED"/>
             </insert>
+            <insert tableName="message_status">
+                <column name="id" value="3"/>
+                <column name="status" value="GET"/>
+            </insert>
         </changeSet>
     <!--/////////////////////////////////////////////////////-->
     <!-- Создание таблицы message_type и заполнение полей для type  -->
@@ -271,4 +275,23 @@
         </insert>
     </changeSet>
     <!--//////////////////////////////////////////////////////-->
+    <!-- Создание таблицы message_status и заполнение полей для messageStatus -->
+    <changeSet id="14" author="maksim">
+        <createTable tableName="mhistory_message_status">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="message_id" type="int">
+            <constraints nullable="false"/>
+            </column>
+            <column name="status_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dateChange" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <!--/////////////////////////////////////////////////////-->
+
 </databaseChangeLog>

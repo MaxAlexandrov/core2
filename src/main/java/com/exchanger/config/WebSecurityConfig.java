@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                  .and()
                     .rememberMe().tokenRepository(persistentTokenRepository())
-                    .tokenValiditySeconds(1209600);
+                    .tokenValiditySeconds(3600);
                     http.removeConfigurer(DefaultLoginPageConfigurer.class);;
     }
     @Bean

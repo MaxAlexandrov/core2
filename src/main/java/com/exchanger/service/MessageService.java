@@ -1,19 +1,15 @@
 package com.exchanger.service;
 
+import com.exchanger.model.HistoryChangeMessagesAndStatus;
 import com.exchanger.model.Message;
 import com.exchanger.model.User;
-import com.exchanger.repository.MessageRepository;
-import com.exchanger.repository.MessageStatusRepository;
-import com.exchanger.repository.MessageTypeRepository;
-import com.exchanger.repository.UserRepository;
+import com.exchanger.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.util.Date;
+import java.util.List;
 
-//TODO Если этот класс не наполнен то этот сервис необходимо удалить за ненадобностью
-//TODO был добавлен для переноса всех методов по обслуживанию БД из к
 @Service
 public class MessageService {
 
@@ -27,10 +23,21 @@ public class MessageService {
     UserRepository userRepository;
     @Autowired
     private MailSender mailSender;
+    @Autowired
+    HistoryMessageAndStatusRepository historyMessageAndStatusRepository;
 
-    public boolean SendNotify(String userTo) {
-
-
+    public boolean changeStatusSendToGet(User user) {
+        List<Message> listmessages = messageRepository.findByUserTo(user.getId());
+        for (Message listmessage : listmessages) {
+            if(listmessage.getStatus().equals(messageStatusRepository.findByStatus("SEND").getId())){
+                Date dateChange = new Date();
+                listmessage.setStatus(messageStatusRepository.findByStatus("GET").getId());
+                listmessage.setDateGet(dateChange);
+                addHistoryStatusChanged(listmessage.getId(),listmessage.getStatus(),dateChange);
+                sendNotification(userRepository.findById(listmessage.getUserFrom()),user,listmessage.getMessage_type(),listmessage.getStatus()," message WAS GETTING ");
+                messageRepository.save(listmessage);
+            }
+        }
         return true;
     }
 
@@ -38,20 +45,33 @@ public class MessageService {
         Message message = new Message();
         User userTo = userRepository.findByEmail(email);
         if(userTo!=null) {
+            Date dateChange = new Date();
             message.setText_message(textMessage);
             message.setMessage_type(messageTypeRepository.findByType(typeMessage).getId());
-            message.setUser_to(userTo.getId());
-            message.setUser_from(user.getId());
-            message.setDateSend(new Date());
+            message.setUserTo(userTo.getId());
+            message.setUserFrom(user.getId());
+            message.setDateSend(dateChange);
             message.setStatus(messageStatusRepository.findByStatus("SEND").getId());
             messageRepository.save(message);
+            addHistoryStatusChanged(message.getId(),message.getStatus(),dateChange);
             if (!StringUtils.isEmpty(userTo.getEmail())&& typeMessage.equals("order")) {
-                String messageForSender = String.format("Hello %s \n" + " you get message from user: %s\n and from this %s\n email" +
-                        "Please go to this link for look detail: http://localhost:8080/user", userTo.getLogin(), user.getLogin(), user.getEmail());
-                mailSender.send(userTo.getEmail(), "You GET a new message ExchangerMail", messageForSender);
+                sendNotification(userTo,user,message.getMessage_type(),message.getStatus(),"You GET a new message in ExchangerMail");
             }
             return true;
         }else
             return false;
     }
+
+    public boolean sendNotification(User userTo, User userFrom, Integer messageType, Integer messageStatus, String message){
+        String messageForSender = String.format("Hello %s \n" + " %s\n  from user:  %s\n and from email: %s\n " +
+                    "Please go to this link for look detail: http://localhost:8080/user", userTo.getLogin(),message, userFrom.getLogin(), userTo.getEmail());
+            mailSender.send(userTo.getEmail(),message, messageForSender);
+        return true;
+    }
+
+    public boolean addHistoryStatusChanged(Long message_id, Integer status_id, Date dateChange){
+        historyMessageAndStatusRepository.save( new HistoryChangeMessagesAndStatus(message_id,status_id,dateChange));
+        return true;
+    }
+
 }
