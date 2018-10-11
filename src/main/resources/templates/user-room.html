@@ -28,7 +28,7 @@
         </form>
     <div id = "success">
         <div th:switch="${success}">
-            <p th:case="null"> Filter </p>
+            <p th:case="null"></p>
             <p th:case="*" th:text = ${success}/>
         </div>
     </div>

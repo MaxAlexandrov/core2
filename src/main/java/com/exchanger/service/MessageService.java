@@ -2,6 +2,7 @@ package com.exchanger.service;
 
 import com.exchanger.model.HistoryChangeMessagesAndStatus;
 import com.exchanger.model.Message;
+import com.exchanger.model.MessageStatus;
 import com.exchanger.model.User;
 import com.exchanger.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,15 @@ public class MessageService {
 
     public boolean changeStatusSendToGet(User user) {
         List<Message> listmessages = messageRepository.findByUserTo(user.getId());
-        for (Message listmessage : listmessages) {
-            if(listmessage.getStatus().equals(messageStatusRepository.findByStatus("SEND").getId())){
-                Date dateChange = new Date();
-                listmessage.setStatus(messageStatusRepository.findByStatus("GET").getId());
-                listmessage.setDateGet(dateChange);
-                addHistoryStatusChanged(listmessage.getId(),listmessage.getStatus(),dateChange);
-                sendNotification(userRepository.findById(listmessage.getUserFrom()),user,listmessage.getMessage_type(),listmessage.getStatus()," message WAS GETTING ");
-                messageRepository.save(listmessage);
-            }
+            for (Message listmessage : listmessages) {
+                 if (listmessage.getStatus().equals(messageStatusRepository.findByStatus("SEND").getId())) {
+                        Date dateChange = new Date();
+                        listmessage.setStatus(messageStatusRepository.findByStatus("GET").getId());
+                        listmessage.setDateGet(dateChange);
+                        addHistoryStatusChanged(listmessage.getId(), listmessage.getStatus(), dateChange);
+                        sendNotification(userRepository.findById(listmessage.getUserFrom()), user, listmessage.getMessage_type(), listmessage.getStatus(), " message WAS GETTING ");
+                        messageRepository.save(listmessage);
+                }
         }
         return true;
     }

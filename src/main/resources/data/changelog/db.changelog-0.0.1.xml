@@ -169,10 +169,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="date_send" type="datetime">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="date_get" type="datetime">
                 <constraints nullable="true"/>
+            </column>
+            <column name="status" type="int">
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
@@ -185,6 +188,7 @@
             <column name="message_type" value="1"/>
             <column name="date_send" value="10.12.2012"/>
             <column name="date_get" value="14.12.2012"/>
+            <column name="status" value="1"/>
         </insert>
         <insert tableName="message">
             <column name="id" value="2"/>
@@ -194,6 +198,7 @@
             <column name="message_type" value="1"/>
             <column name="date_send" value="10.12.2012"/>
             <column name="date_get" value="14.12.2012"/>
+            <column name="status" value="1"/>
         </insert>
         <insert tableName="message">
             <column name="id" value="3"/>
@@ -203,6 +208,7 @@
             <column name="message_type" value="1"/>
             <column name="date_send" value="10.12.2012"/>
             <column name="date_get" value="14.12.2012"/>
+            <column name="status" value="1"/>
         </insert>
         <insert tableName="message">
             <column name="id" value="4"/>
@@ -212,6 +218,7 @@
             <column name="message_type" value="2"/>
             <column name="date_send" value="10.12.2012"/>
             <column name="date_get" value="14.12.2012"/>
+            <column name="status" value="1"/>
         </insert>
         <insert tableName="message">
             <column name="id" value="5"/>
@@ -221,6 +228,7 @@
             <column name="message_type" value="2"/>
             <column name="date_send" value="10.12.2012"/>
             <column name="date_get" value="14.12.2012"/>
+            <column name="status" value="1"/>
         </insert>
         <insert tableName="message">
             <column name="id" value="6"/>
@@ -230,6 +238,7 @@
             <column name="message_type" value="1"/>
             <column name="date_send" value="10.12.2012"/>
             <column name="date_get" value="14.12.2012"/>
+            <column name="status" value="1"/>
         </insert>
     </changeSet>
     <!--/////////////////////////////////////////////////////-->
